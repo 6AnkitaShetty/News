@@ -4,25 +4,25 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.*
-import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.NewsApplication
 import com.example.news.repository.NewsRepository
 import com.example.news.Resource
 import com.example.news.models.Article
 import com.example.news.models.NewsResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.io.IOError
 import java.io.IOException
+import javax.inject.Inject
 
-class NewsViewModel(
-    app: Application,
-    private val newsRepository: NewsRepository
-) : AndroidViewModel(app) {
+@HiltViewModel
+class NewsViewModel @Inject constructor(
+    private val newsRepository: NewsRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var breakingNewsPage = 1
