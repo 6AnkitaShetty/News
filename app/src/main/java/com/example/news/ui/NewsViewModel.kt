@@ -8,11 +8,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.news.NewsApplication
+import com.example.news.R
 import com.example.news.repository.NewsRepository
 import com.example.news.Resource
 import com.example.news.models.Article
 import com.example.news.models.NewsResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -31,6 +34,8 @@ class NewsViewModel @Inject constructor(
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var searchNewsPage = 1
     var searchNewsResponse: NewsResponse? = null
+    private val eventChannel = Channel<Event>()
+    val events = eventChannel.receiveAsFlow()
 
     init {
         getBreakingNews("us")
@@ -84,6 +89,7 @@ class NewsViewModel @Inject constructor(
 
     fun saveArticle(article: Article) = viewModelScope.launch {
         newsRepository.upsert(article)
+        eventChannel.send(Event.ShowSuccessMessage(R.string.article_saved_confirmation_message))
     }
 
     fun getSavedNews() = newsRepository.getSavedNews()
@@ -139,6 +145,10 @@ class NewsViewModel @Inject constructor(
             capabilities.hasTransport(TRANSPORT_ETHERNET) -> true
             else -> false
         }
+    }
+
+    sealed class Event {
+        data class ShowSuccessMessage(val message: Int) : Event()
     }
 
 }
