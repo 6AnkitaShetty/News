@@ -7,12 +7,12 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
 @ViewModelScoped
-class NewsRepository  @Inject constructor(
+class NewsRepository @Inject constructor(
     private val articleDao: ArticleDao,
     private val newsApi: NewApi
-)  {
-    suspend fun getBreakingNews(countryCode: String, pageNumber: Int) =
-        newsApi.getBreakingNews(countryCode, pageNumber)
+) {
+    suspend fun getBreakingNews(pageNumber: Int) =
+        newsApi.getBreakingNews(pageNumber = pageNumber)
 
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
         newsApi.searchForNews(searchQuery, pageNumber)

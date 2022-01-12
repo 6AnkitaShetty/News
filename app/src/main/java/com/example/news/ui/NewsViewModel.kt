@@ -42,7 +42,6 @@ class NewsViewModel @Inject constructor(
     private val eventChannel = Channel<Event>()
     val events = eventChannel.receiveAsFlow()
 
-
     var networkStatus = false
     var backOnline = false
     val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
@@ -52,12 +51,12 @@ class NewsViewModel @Inject constructor(
         }
 
     init {
-        getBreakingNews("us")
+        getBreakingNews()
     }
 
-    fun getBreakingNews(countryCode: String) =
+    fun getBreakingNews() =
         viewModelScope.launch {
-            safeBreakingNews(countryCode)
+            safeBreakingNews()
         }
 
     fun searchNews(searchQuery: String) =
@@ -112,11 +111,11 @@ class NewsViewModel @Inject constructor(
         newsRepository.deleteArticle(article)
     }
 
-    private suspend fun safeBreakingNews(countryCode: String) {
+    private suspend fun safeBreakingNews() {
         breakingNews.postValue(Resource.Loading())
         try {
             if (hasInternetConnection()) {
-                val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
+                val response = newsRepository.getBreakingNews(breakingNewsPage)
                 breakingNews.postValue(handleBreakingNewsResponse(response))
             } else {
                 breakingNews.postValue(Resource.Error("No internet connection"))
