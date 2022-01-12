@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.*
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.example.news.repository.NewsRepository
 import com.example.news.Resource
 import com.example.news.models.Article
 import com.example.news.models.NewsResponse
+import com.example.news.repository.DataStoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -20,11 +22,14 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.Dispatchers
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository,
-    application: Application
+    application: Application,
+    private val dataStoreRepository: DataStoreRepository
 ) : AndroidViewModel(application) {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
@@ -36,6 +41,15 @@ class NewsViewModel @Inject constructor(
     var searchNewsResponse: NewsResponse? = null
     private val eventChannel = Channel<Event>()
     val events = eventChannel.receiveAsFlow()
+
+
+    var networkStatus = false
+    var backOnline = false
+    val readBackOnline = dataStoreRepository.readBackOnline.asLiveData()
+    private fun saveBackOnline(backOnline: Boolean) =
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStoreRepository.saveBackOnline(backOnline)
+        }
 
     init {
         getBreakingNews("us")
@@ -144,6 +158,18 @@ class NewsViewModel @Inject constructor(
             capabilities.hasTransport(TRANSPORT_CELLULAR) -> true
             capabilities.hasTransport(TRANSPORT_ETHERNET) -> true
             else -> false
+        }
+    }
+
+    fun showNetworkStatus() {
+        if (!networkStatus) {
+            Toast.makeText(getApplication(), "No Internet Connection.", Toast.LENGTH_SHORT).show()
+            saveBackOnline(true)
+        } else if (networkStatus) {
+            if (backOnline) {
+                Toast.makeText(getApplication(), "We're back online.", Toast.LENGTH_SHORT).show()
+                saveBackOnline(false)
+            }
         }
     }
 

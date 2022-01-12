@@ -6,4 +6,6 @@ object Constants {
     const val SEARCH_NEWS_TIME_DELAY = 500L
     const val QUERY_PAGE_SIZE = 20
     const val DATABASE_NAME = "article_db"
+    const val PREFERENCES_NAME = "news_preferences"
+    const val PREFERENCES_BACK_ONLINE = "backOnline"
 }

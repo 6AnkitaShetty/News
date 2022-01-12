@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.example.news.databinding.FragmentArticleBinding
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collect
 @AndroidEntryPoint
 class ArticleFragment : Fragment() {
 
-    lateinit var viewModel: NewsViewModel
+    private val viewModel: NewsViewModel by viewModels()
     val args: ArticleFragmentArgs by navArgs()
     private lateinit var binding: FragmentArticleBinding
     override fun onCreateView(
@@ -36,7 +36,6 @@ class ArticleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[NewsViewModel::class.java]
         val article = args.article
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
