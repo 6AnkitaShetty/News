@@ -8,7 +8,6 @@ import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +17,8 @@ import com.example.news.adapters.NewsAdapter
 import com.example.news.databinding.FragmentBreakingNewsBinding
 import com.example.news.ui.NewsViewModel
 import com.example.news.utils.Constants.QUERY_PAGE_SIZE
-import com.example.news.utils.NetworkListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -30,7 +27,6 @@ class BreakingNewsFragment : Fragment() {
     private val viewModel: NewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
     lateinit var binding: FragmentBreakingNewsBinding
-    private lateinit var networkListener: NetworkListener
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,18 +51,6 @@ class BreakingNewsFragment : Fragment() {
                 R.id.action_breakingNewsFragment_to_articleFragment,
                 bundle
             )
-        }
-
-        viewModel.readBackOnline.observe(viewLifecycleOwner, { viewModel.backOnline = it })
-
-        lifecycleScope.launchWhenStarted {
-            networkListener = NetworkListener()
-            networkListener.checkNetworkAvailability(requireContext())
-                .collect { status ->
-                    viewModel.networkStatus = status
-                    viewModel.showNetworkStatus()
-                    //readDatabase()
-                }
         }
 
         viewModel.breakingNews.observe(viewLifecycleOwner, { response ->

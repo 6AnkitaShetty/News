@@ -1,6 +1,6 @@
 package com.example.news.db
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.news.models.Article
 
@@ -8,11 +8,15 @@ import com.example.news.models.Article
 interface ArticleDao {
 
     @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
-    suspend fun upsert(article: Article)
+    suspend fun saveArticle(article: Article)
 
     @Query("SELECT * FROM articles")
-    fun getAllArticles(): LiveData<List<Article>>
+    fun getAllArticles(): PagingSource<Int, Article>
 
     @Delete
     suspend fun deleteArticle(article: Article)
+
+    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    suspend fun saveArticles(articles: List<Article>)
+
 }
