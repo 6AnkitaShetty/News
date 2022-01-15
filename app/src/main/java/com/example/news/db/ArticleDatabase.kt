@@ -5,12 +5,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.news.di.ApplicationScope
+import com.example.news.models.AllNewsRemoteKey
 import com.example.news.models.Article
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 @Database(
-    entities = [Article::class],
+    entities = [Article::class, AllNewsRemoteKey::class],
     version = 1
 )
 @TypeConverters(Converters::class)

@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +18,17 @@ import com.example.news.databinding.FragmentSavedNewsBinding
 import com.example.news.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_saved_news.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
+@ExperimentalCoroutinesApi
 class SavedNewsFragment : Fragment() {
+
     private val viewModel: NewsViewModel by viewModels()
     private lateinit var newsAdapter: NewsAdapter
-    lateinit var binding:FragmentSavedNewsBinding
+    lateinit var binding: FragmentSavedNewsBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,16 +78,16 @@ class SavedNewsFragment : Fragment() {
                     show()
                 }
             }
-
         }
 
         ItemTouchHelper(itemTouchHelperCallback).apply {
-            attachToRecyclerView(binding.rvSavedNews)
+            attachToRecyclerView(rvSavedNews)
         }
-        viewModel.getSavedNews().observe(viewLifecycleOwner, { articles ->
-            newsAdapter.differ.submitList(articles)
-        })
 
+
+        viewModel.getSavedNews().observe(viewLifecycleOwner, Observer { article ->
+            newsAdapter.differ.submitList(article)
+        })
 
     }
 

@@ -1,5 +1,6 @@
 package com.example.news.db
 
+import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.news.models.Article
@@ -12,6 +13,9 @@ interface ArticleDao {
 
     @Query("SELECT * FROM articles")
     fun getAllArticles(): PagingSource<Int, Article>
+
+    @Query("SELECT * FROM articles WHERE isSaved=1")
+    fun getArticles(): LiveData<List<Article>>
 
     @Delete
     suspend fun deleteArticle(article: Article)

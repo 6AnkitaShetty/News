@@ -99,4 +99,6 @@ dependencies {
 
     //pagination - pagination
     implementation "androidx.paging:paging-runtime-ktx:3.0.1"
+
+    implementation "androidx.room:room-paging:2.4.0-alpha04"
 }

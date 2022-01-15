@@ -58,4 +58,10 @@ class NewsRepository @Inject constructor(
             emit(result)
         }.flowOn(Dispatchers.IO)
     }
+
+    suspend fun savedArticle(article: Article) = articleDao.saveArticle(article)
+
+    fun getSavedNews() = articleDao.getArticles()
+
+    suspend fun deleteArticle(article: Article) = articleDao.deleteArticle(article)
 }

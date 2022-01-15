@@ -9,13 +9,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.paging.ExperimentalPagingApi
 import com.example.news.databinding.FragmentArticleBinding
 import com.example.news.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
+@ExperimentalCoroutinesApi
 class ArticleFragment : Fragment() {
 
     private val viewModel: NewsViewModel by viewModels()

@@ -1,6 +1,5 @@
 package com.example.news.ui
 
-import android.net.NetworkCapabilities.*
 import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
@@ -13,11 +12,10 @@ import com.example.news.models.NewsResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,12 +25,8 @@ class NewsViewModel @Inject constructor(
     private val newsRepository: NewsRepository
 ) : ViewModel() {
 
-    val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    var breakingNewsPage = 1
-    var breakingNewsResponse: NewsResponse? = null
-
-    private val _searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    val searchNews: LiveData<Resource<NewsResponse>> = _searchNews
+    private val _searchAllNews = MutableLiveData<Resource<NewsResponse>>()
+    val searchAllNews: LiveData<Resource<NewsResponse>> = _searchAllNews
 
     private val eventChannel = Channel<Event>()
     val events = eventChannel.receiveAsFlow()
@@ -45,19 +39,21 @@ class NewsViewModel @Inject constructor(
         viewModelScope.launch {
             newsRepository.searchNews(searchQuery)
                 .catch { e ->
-                    _searchNews.value = Resource.Error(e.toString())
+                    _searchAllNews.value = Resource.Error(e.toString())
                 }.collect {
-                    _searchNews.value = it
+                    _searchAllNews.value = it
                 }
         }
     }
 
     fun saveArticle(article: Article) = viewModelScope.launch {
-        newsRepository.save(article)
+        article.isSaved = true
+        newsRepository.savedArticle(article)
         eventChannel.send(Event.ShowSuccessMessage(R.string.article_saved_confirmation_message))
     }
 
     fun getSavedNews() = newsRepository.getSavedNews()
+
 
     fun deleteArticle(article: Article) = viewModelScope.launch {
         newsRepository.deleteArticle(article)
