@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.news.R
 import com.example.news.adapters.PagingNewsAdapter
@@ -57,7 +59,7 @@ class BreakingNewsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getBreakingNews().collectLatest { pagingData->
+                viewModel.getBreakingNews().collectLatest { pagingData ->
                     pagingNewsAdapter.submitData(pagingData)
                 }
             }
@@ -69,6 +71,7 @@ class BreakingNewsFragment : Fragment() {
         binding.rvBreakingNews.apply {
             adapter = pagingNewsAdapter
             layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(DividerItemDecoration(requireContext(), LinearLayout.VERTICAL))
         }
     }
 }

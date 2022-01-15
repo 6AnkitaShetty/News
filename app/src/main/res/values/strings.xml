@@ -6,4 +6,5 @@
     <string name="favorite_button">favorite button</string>
     <string name="article_saved_confirmation_message">Article saved successfully</string>
     <string name="view_full_article">View Full article</string>
+    <string name="articleimage">articleImage</string>
 </resources>

@@ -9,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.news.R
-import com.example.news.databinding.FragmentBreakingNewsBinding
 import com.example.news.databinding.FragmentNewsDetailBinding
 import com.example.news.utils.Utility
 
