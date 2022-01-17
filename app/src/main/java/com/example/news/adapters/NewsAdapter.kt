@@ -1,18 +1,24 @@
 package com.example.news.adapters
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.news.R
+import com.example.news.databinding.ItemArticlePreviewBinding
 import com.example.news.models.Article
-import kotlinx.android.synthetic.main.item_article_preview.view.*
 
 class NewsAdapter: RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
-    inner class ArticleViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
+    inner class ArticleViewHolder constructor(private val binding: ItemArticlePreviewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Article) {
+            binding.model = item
+            binding.mainView.setOnClickListener {
+                onItemClickListener?.let { it(item) }
+            }
+            binding.executePendingBindings()
+        }
+    }
 
     private val differCallback = object : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
@@ -27,13 +33,9 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
     val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        return ArticleViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_article_preview,
-                parent,
-                false
-            )
-        )
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemArticlePreviewBinding.inflate(layoutInflater, parent, false)
+        return ArticleViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -44,10 +46,8 @@ class NewsAdapter: RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
-        holder.itemView.apply {
-            setOnClickListener {
-                onItemClickListener?.let { it(article) }
-            }
+        if (article != null) {
+            holder.bind(article)
         }
     }
 
